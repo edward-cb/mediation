@@ -346,75 +346,74 @@
 
   .hero-motif { min-height: 150px; display: grid; align-items: center; }
 
-  .motif { --drift: 56px; width: 100%; height: auto; display: block; overflow: visible; }
-  /* Stroke widths are in viewBox units. vector-effect: non-scaling-stroke
-     is avoided because Firefox and Safari then ignore pathLength when
-     drawing dashes, which breaks the line-draw animation. */
-  .line {
+  .motif { --drift: 64px; width: 100%; height: auto; display: block; overflow: visible; }
+  /* Stroke widths are in viewBox units. Sails and hull are filled with
+     the page colour so the water and horizon behind them stay hidden. */
+  .motif path, .motif circle {
     fill: none;
-    stroke-width: 3.2;
     stroke-linecap: round;
     stroke-linejoin: round;
     transform-box: view-box;
-    transform-origin: 0 0;
   }
-  /* One 20s story: apart, meeting, agreement, then reset.
-     Without animation every piece sits in its agreement state,
-     which is also what reduced-motion visitors see. */
-  .line-a, .line-b { opacity: 0.35; }
-  .line-a { stroke: var(--stroke-teal); animation: drift-a 20s ease-in-out infinite; }
-  .line-b { stroke: var(--stroke-sand); animation: drift-b 20s ease-in-out infinite; }
+  .ink { stroke: var(--stroke-teal); stroke-width: 2.2; }
+  .ink.solid { fill: var(--bg); }
+  .fine-ink { stroke: var(--stroke-teal); stroke-width: 1.1; }
+  .seam { stroke: var(--stroke-teal); stroke-width: 0.8; opacity: 0.45; }
+  .sand-ink { stroke: var(--stroke-sand); stroke-width: 1.5; }
+  .faint { opacity: 0.5; }
 
-  .accord {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-    animation: accord 20s ease-in-out infinite;
-  }
-  .accord-a { stroke: var(--stroke-teal); }
-  .accord-b { stroke: var(--stroke-sand); }
-  .seal-fill {
-    fill: var(--sand);
-    animation: seal-fill 20s ease-in-out infinite;
-  }
-  .seal-ring, .seal-check {
-    stroke: var(--stroke-teal);
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-  }
-  .seal-ring { animation: seal-ring 20s ease-in-out infinite; }
-  .seal-check { animation: seal-check 20s ease-in-out infinite; }
+  /* The water scrolls exactly two wavelengths per loop, and each dash
+     pattern adds up to that distance, so the loop has no visible seam. */
+  .wave { stroke-width: 1.6; }
+  .wave-1 { stroke: var(--stroke-sand); stroke-dasharray: 26 10 30 14; opacity: 0.55; animation: flow-1 26s linear infinite; }
+  .wave-2 { stroke: var(--stroke-teal); stroke-dasharray: 44 14 38 24; opacity: 0.6; animation: flow-2 30s linear infinite; }
+  .wave-3 { stroke: var(--stroke-sand); stroke-dasharray: 62 18 50 30; opacity: 0.7; animation: flow-3 34s linear infinite; }
+  .wave-4 { stroke: var(--stroke-teal); stroke-dasharray: 80 22 60 38; opacity: 0.75; animation: flow-4 38s linear infinite; }
 
-  @keyframes drift-a {
-    0%, 8% { transform: translateX(calc(var(--drift) * -1)); opacity: 1; }
-    38% { transform: translateX(0); opacity: 1; }
-    58%, 84% { transform: translateX(0); opacity: 0.35; }
-    100% { transform: translateX(calc(var(--drift) * -1)); opacity: 1; }
+  /* Three nested motions: a slow crossing, a gentle bob on the swell,
+     and a pennant lifting in the breeze. */
+  .boat-drift { animation: boat-drift 44s ease-in-out infinite alternate; }
+  .boat-bob {
+    transform-origin: 300px 176px;
+    animation: boat-bob 7s ease-in-out infinite;
   }
-  @keyframes drift-b {
-    0%, 8% { transform: translateX(var(--drift)); opacity: 1; }
-    38% { transform: translateX(0); opacity: 1; }
-    58%, 84% { transform: translateX(0); opacity: 0.35; }
-    100% { transform: translateX(var(--drift)); opacity: 1; }
+  .pennant {
+    transform-origin: 300px 28px;
+    animation: pennant 3.2s ease-in-out infinite;
   }
-  @keyframes accord {
-    0%, 44% { stroke-dashoffset: 1; opacity: 1; }
-    60%, 84% { stroke-dashoffset: 0; opacity: 1; }
-    94%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  .glint { animation: glint 5s ease-in-out infinite; }
+  .glint:nth-child(2n) { animation-delay: -2.5s; }
+  .birds { animation: birds 60s linear infinite; }
+  .motif .wing { transform-origin: center; transform-box: fill-box; animation: wing 2.8s ease-in-out infinite; }
+
+  @keyframes flow-1 { to { transform: translateX(-80px); } }
+  @keyframes flow-2 { to { transform: translateX(-120px); } }
+  @keyframes flow-3 { to { transform: translateX(-160px); } }
+  @keyframes flow-4 { to { transform: translateX(-200px); } }
+  @keyframes boat-drift {
+    from { transform: translateX(calc(var(--drift) * -1)); }
+    to { transform: translateX(var(--drift)); }
   }
-  @keyframes seal-fill {
-    0%, 56% { opacity: 0; }
-    68%, 84% { opacity: 1; }
-    94%, 100% { opacity: 0; }
+  @keyframes boat-bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(2.5px) rotate(1deg); }
   }
-  @keyframes seal-ring {
-    0%, 54% { stroke-dashoffset: 1; opacity: 1; }
-    66%, 84% { stroke-dashoffset: 0; opacity: 1; }
-    94%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  @keyframes pennant {
+    0%, 100% { transform: skewY(0deg) scaleX(1); }
+    50% { transform: skewY(6deg) scaleX(0.92); }
   }
-  @keyframes seal-check {
-    0%, 64% { stroke-dashoffset: 1; opacity: 1; }
-    73%, 84% { stroke-dashoffset: 0; opacity: 1; }
-    94%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  @keyframes glint {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.7; }
+  }
+  @keyframes birds {
+    from { transform: translateX(-30px); }
+    50% { transform: translateX(30px) translateY(-6px); }
+    to { transform: translateX(-30px); }
+  }
+  @keyframes wing {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.6); }
   }
 
   .section { padding: clamp(3.25rem, 2rem + 4vw, 6rem) 0; }
@@ -701,8 +700,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .line-a, .line-b, .accord, .seal-fill, .seal-ring, .seal-check { animation: none; }
-    .line-a, .line-b { transform: none; }
+    .motif * { animation: none !important; }
     .reveal,
     .reveal.is-pending,
     .reveal.is-in {
@@ -719,8 +717,7 @@
     .site-header { position: static; backdrop-filter: none; }
     .nav-toggle, .nav-links, .hero-actions, .form-card { display: none; }
     .reveal.is-pending { opacity: 1; transform: none; }
-    .line-a, .line-b, .accord, .seal-fill, .seal-ring, .seal-check { animation: none; }
-    .line-a, .line-b { transform: none; }
+    .motif * { animation: none !important; }
   }
 </style>
 </head>
@@ -755,14 +752,73 @@
       </div>
     </div>
     <div class="hero-motif">
-      <svg class="motif" viewBox="0 0 600 180" aria-hidden="true" focusable="false">
-        <path class="line line-a" d="M52 128C116 132 166 28 246 58C306 80 302 118 346 104" />
-        <path class="line line-b" d="M548 52C484 48 434 152 354 122C294 100 298 62 254 76" />
-        <path class="line accord accord-a" pathLength="1" d="M300 90C260 90 236 76 196 76C150 76 110 100 52 100" />
-        <path class="line accord accord-b" pathLength="1" d="M300 90C340 90 364 104 404 104C450 104 490 80 548 80" />
-        <circle class="seal-fill" cx="300" cy="90" r="20" />
-        <path class="line seal-ring" pathLength="1" d="M300 70a20 20 0 1 1 0 40a20 20 0 1 1 0-40" />
-        <path class="line seal-check" pathLength="1" d="M291 91l6 6 12-13" />
+      <svg class="motif" viewBox="0 0 600 240" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="fade-x">
+            <stop offset="0" stop-color="#000" />
+            <stop offset="0.14" stop-color="#fff" />
+            <stop offset="0.86" stop-color="#fff" />
+            <stop offset="1" stop-color="#000" />
+          </linearGradient>
+          <mask id="fade-edges" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="240">
+            <rect width="600" height="240" fill="url(#fade-x)" />
+          </mask>
+          <clipPath id="main-cloth"><path d="M300 40C290 70 266 108 249 138L299 135Z" /></clipPath>
+          <clipPath id="jib-cloth"><path d="M306 49L365 143L323 143C318 112 312 80 306 49Z" /></clipPath>
+        </defs>
+
+        <circle class="sand-ink faint" cx="478" cy="92" r="24" />
+        <g class="birds">
+          <path class="fine-ink faint wing" d="M120 62q5-5 10 0q5-5 10 0" />
+          <path class="fine-ink faint wing" style="animation-delay:-1.1s" d="M148 50q3.5-3.5 7 0q3.5-3.5 7 0" />
+        </g>
+
+        <g mask="url(#fade-edges)">
+          <path class="sand-ink faint" d="M30 158C60 146 84 140 108 146C128 138 150 136 176 150C188 155 198 157 210 158" />
+          <path class="fine-ink faint" d="M0 158H600" />
+          <path class="sand-ink glint" d="M462 168h32M468 176h20" />
+          <path class="wave wave-1" d="M-240 174q10 -1.2 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" />
+          <path class="wave wave-2" d="M-240 188q15 -2 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0" />
+          <path class="wave wave-3" d="M-240 203q20 -2.6 40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0" />
+          <path class="wave wave-4" d="M-240 219q25 -3.2 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" />
+        </g>
+
+        <g class="boat-drift">
+          <g class="reflection">
+            <path class="fine-ink glint" d="M258 191h22M290 191h34M268 197h14M300 197h26" />
+            <path class="sand-ink glint" d="M276 203h10M304 203h12" />
+          </g>
+          <path class="fine-ink faint" d="M232 177c-14 2-30 1-46 4M236 183c-16 3-34 3-54 7" />
+
+          <g class="boat-bob">
+            <path class="fine-ink faint" d="M300 36L372 153M300 36L237 157M300 64L294 156M300 64L306 156" />
+            <path class="ink" d="M300 152V30" />
+            <g class="pennant"><path class="fine-ink" d="M300 26l17 4.5-17 4.5" /></g>
+
+            <path class="ink solid" d="M300 40C290 70 266 108 249 138L299 135Z" />
+            <g clip-path="url(#main-cloth)">
+              <path class="seam" d="M240 58L310 52M240 76L310 69M240 94L310 86M240 112L310 103M240 130L310 120" />
+            </g>
+            <path class="fine-ink" d="M288 69l9-1.5M274.5 94l13-2M260 119l15-2.5" />
+
+            <path class="ink solid" d="M306 49L365 143L323 143C318 112 312 80 306 49Z" />
+            <g clip-path="url(#jib-cloth)">
+              <path class="seam" d="M300 74L370 66M300 98L370 90M300 122L370 114" />
+            </g>
+
+            <path class="ink" d="M300 137L243 141" />
+            <path class="fine-ink" d="M250 141l2 15" />
+
+            <path class="ink solid" d="M266 159L271 149H318L325 159" />
+            <path class="fine-ink" d="M277 154h8M291 154h8M305 154h8" />
+            <path class="ink solid" d="M234 157C272 163 326 163 378 151C370 163 362 171 351 177C322 184 270 184 245 177Z" />
+            <path class="fine-ink" d="M240 160.5C276 166 326 166 372 155.5" />
+            <path class="fine-ink" d="M244 171C282 176 330 175 358 168" />
+            <circle class="fine-ink" cx="278" cy="167" r="2" />
+            <circle class="fine-ink" cx="298" cy="168" r="2" />
+            <circle class="fine-ink" cx="318" cy="167" r="2" />
+          </g>
+        </g>
       </svg>
     </div>
   </section>
